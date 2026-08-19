@@ -1,8 +1,7 @@
 # =========================================================
-# MindEase - Academic Stress & Recovery Simulator (Final Aug 13)
+# MindEase - Academic Stress & Recovery Simulator
 # Engine: Qwen 2.5 via Hugging Face API
 # =========================================================
-
 
 import os
 import re
@@ -105,4 +104,4 @@ demo = gr.TabbedInterface(
     title="MindEase Simulator"
 )
 
-demo.launch(share=True)
+demo.launch()
