@@ -21,7 +21,7 @@ def clean_arabic_text(text):
     clean_text = re.sub(r'[^\u0600-\u06FF0-9\s\.\،\:\-\n]', '', text)
     return clean_text.strip()
 
-# 3. System Prompt لضمان الجودة واكتمال 3 خطوات قصيرة
+# 3. System Prompt لضمان الجودة
 SYSTEM_PROMPT = """أنتِ "MindEase"، مرشدة أكاديمية ونفسية لطلاب الجامعة.
 قواعد صارمة:
 1. الكتابة باللغة العربية الفصحى البسيطة والواضحة فقط.
@@ -104,4 +104,4 @@ demo = gr.TabbedInterface(
     title="MindEase Simulator"
 )
 
-demo.launch()
+demo.launch(server_name="0.0.0.0", server_port=8501)
