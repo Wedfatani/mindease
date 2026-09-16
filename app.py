@@ -1,8 +1,8 @@
 import gradio as gr
 from openai import AzureOpenAI
 
-# 1. بيانات الاتصال بـ Azure OpenAI
-AZURE_OPENAI_KEY = "5WLUCuiX38EBjj1G7Zbclh4VGnGEkagxMklQ6hAsPblWZycr9igwJQQJ99CIACF24PCXJ3w3AAABACOGcoZf"
+# 1. إعدادات باكت الاتصال بـ Azure OpenAI
+AZURE_OPENAI_KEY = "SMUCUKBWERjjj672bcV4MVuKGBWJpycHr9Gwo700J7PICI47 J3AAABC6GcZF"
 AZURE_OPENAI_ENDPOINT = "https://mindease2027.openai.azure.com/"
 DEPLOYMENT_NAME = "gpt-4o"
 
@@ -13,48 +13,45 @@ client = AzureOpenAI(
     api_version="2024-02-01"
 )
 
-# 3. دالة معالجة المحادثة بدون أخطاء السجل (Robust History Handling)
+# 3. دالة معالجة الرسائل (Robust History Handling)
 def mindease_response(message, history):
     system_prompt = (
-        "أنت 'MindEase'، مرشد وأخصائي دعم نفسي وأكاديمي ذكي للطلاب الجامعيين. "
-        "قدم نصائح عملية ومباشرة ومختصرة جداً في نقاط قصيرة بدون مقدمات طويلة."
+        "أنت مساعد نفسي داعم وأكاديمي مصمم لمساعدة طلاب الجامعات في تخفيف التوتر وتقسيم مهامهم الدراسية. "
+        "تحدث بلغة عربية دافئة، متعاطفة، ومشجعة. قدم نصائح عملية ومختصرة."
     )
     
+    # تحويل سجل المحادثة (History) بالصيغة التي تفهمها OpenAI API
     messages = [{"role": "system", "content": system_prompt}]
     
-    # معالجة حذرة ومستقرة لسجل المحادثة
     if history:
-        for turn in history:
-            if isinstance(turn, (list, tuple)) and len(turn) == 2:
-                user_msg, bot_msg = turn
-                if user_msg:
-                    messages.append({"role": "user", "content": str(user_msg)})
-                if bot_msg:
-                    messages.append({"role": "assistant", "content": str(bot_msg)})
-            elif isinstance(turn, dict):
-                messages.append(turn)
+        for human_msg, assistant_msg in history:
+            if human_msg:
+                messages.append({"role": "user", "content": human_msg})
+            if assistant_msg:
+                messages.append({"role": "assistant", "content": assistant_msg})
                 
-    messages.append({"role": "user", "content": str(message)})
+    messages.append({"role": "user", "content": message})
     
     try:
         response = client.chat.completions.create(
             model=DEPLOYMENT_NAME,
             messages=messages,
-            max_tokens=200,
-            temperature=0.7
+            max_tokens=500,
+            temperature=0.7,
         )
         return response.choices[0].message.content
     except Exception as e:
-        return f"خطأ: {str(e)}"
+        return "عذراً، حدث خطأ بسيط في الاتصال. تأكد من المحاولة مرة أخرى قريباً."
 
-# 4. تشغيل الواجهة بصورة مستقرة
+# 4. تصميم الواجهة باستخدام Gradio
 demo = gr.ChatInterface(
     fn=mindease_response,
-    title="🧠 MindEase - المساعد الذكي للدعم الأكاديمي والنفسي",
-    description="مشروع مشارك في مسابقة Microsoft Imagine Cup 2026",
-    textbox=gr.Textbox(placeholder="اكتب استفسارك هنا واضغط Enter...", label="ريالتك")
+    title="MindEase - رفيقك الذكي للدعم الأكاديمي والنفسي",
+    description="مشروع مشارك في Microsoft Imagine Cup 2026.",
+    textbox=gr.Textbox(placeholder="اكتب رسالتك هنا وطبق Enter...", container=False, scale=7),
 )
 
 if name == "__main__":
-    demo.queue()
-    demo.launch(server_name="0.0.0.0", server_port=8000)
+    import os
+    port = int(os.environ.get("PORT", 8000))
+    demo.launch(server_name="0.0.0.0", server_port=port)
