@@ -2,7 +2,6 @@ from flask import Flask, render_template_string, request
 
 application = Flask(__name__)
 
-# تصميم صفحة الويب البسيطة والمريحة لمشروع MindEase
 HTML_TEMPLATE = """
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
@@ -22,7 +21,7 @@ HTML_TEMPLATE = """
         <h2>MindEase 🌿</h2>
         <p>مساحتك الهادئة لتفريغ الأفكار والدعم النفسي</p>
         <form method="POST">
-            <input type="text" name="user_input" placeholder="... اكتبي ما تجول خاطرك أو شعورك هنا" required>
+            <input type="text" name="user_input" placeholder="اكتبي ما يشغل تفكيرك هنا..." required>
             <br>
             <input type="submit" value="إرسال">
         </form>
@@ -46,4 +45,4 @@ def home():
     return render_template_string(HTML_TEMPLATE, user_message=user_message)
 
 if name == "__main__":
-    application.run(debug=True)
+    application.run()
