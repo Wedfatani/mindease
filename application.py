@@ -1,6 +1,6 @@
 from flask import Flask, render_template_string, request
 
-app = Flask(__name__)
+application = Flask(__name__)
 
 # تصميم صفحة الويب البسيطة والمريحة لمشروع MindEase
 HTML_TEMPLATE = """
@@ -19,29 +19,31 @@ HTML_TEMPLATE = """
 </head>
 <body>
     <div class="container">
-        <h2>🧠 MindEase</h2>
-        <p>مساحتك الهادئة لتفريغ الأفكار والدعم الذكي</p>
+        <h2>MindEase 🌿</h2>
+        <p>مساحتك الهادئة لتفريغ الأفكار والدعم النفسي</p>
         <form method="POST">
-            <input type="text" name="user_input" placeholder="اكتبي ما يشغل تفكيرك هنا..." required>
+            <input type="text" name="user_input" placeholder="... اكتبي ما تجول خاطرك أو شعورك هنا" required>
             <br>
-            <input type="submit" value="إرسال ودعم">
+            <input type="submit" value="إرسال">
         </form>
-        {% if response %}
-            <div class="result"><strong>الرد:</strong> {{ response }}</div>
+        {% if user_message %}
+            <div class="result">
+                <strong>تأملي رسالتك:</strong>
+                <p>{{ user_message }}</p>
+                <p style="color: #2e7d32; font-size: 0.9em;">خذي نفساً عميقاً، أنتِ تقومين بعمل رائع! 💚</p>
+            </div>
         {% endif %}
     </div>
 </body>
 </html>
 """
 
-@app.route("/", methods=["GET", "POST"])
+@application.route("/", methods=["GET", "POST"])
 def home():
-    response = None
+    user_message = None
     if request.method == "POST":
-        user_input = request.form.get("user_input")
-        # هنا يمكنك ربط ذكاء مايكروسوفت أو الرد الذكي مباشرة
-        response = f"أهلاً بكِ. لقد تلقيت رسالتكِ: '{user_input}'. خذي نفساً عميقاً، نحن هنا لدعمكِ 🌿✨"
-    return render_template_string(HTML_TEMPLATE, response=response)
+        user_message = request.form.get("user_input")
+    return render_template_string(HTML_TEMPLATE, user_message=user_message)
 
 if name == "__main__":
-    app.run(host="0.0.0.0", port=8000)
+    application.run(debug=True)
