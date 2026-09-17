@@ -1,26 +1,31 @@
 import gradio as gr
-import os
 
-# هنا يمكنك وضع دوال أو منطق تطبيق MindEase الخاص بك
+# دالة بسيطة لتقديم استجابة تفاعلية لمشروع MindEase
 def mind_ease_response(user_input):
-    # مثال بسيط، استبدليه بمنطق مشروعك الفعلي
-    return f"مرحباً بكِ في منصة MindEase الدعم الأكاديمي. استلمنا استفسارك: '{user_input}'"
+    if not user_input.strip():
+        return "الرجاء كتابة ما تفكر فيه لنتمكن من مساعدتك."
+    
+    # رسالة دعم نفسي تحفيزية واسترخاء
+    response = (
+        f"أهلاً بكِ. لقد تلقيت رسالتكِ: '{user_input}'\n\n"
+        "خذي نفساً عميقاً وافرغي ذهنك قليلاً. نحن هنا دائماً لدعمك ومساعدتك في تخطي الضغوط والوصول للراحة النفسية والذهنية المطلوبة. 🌿✨"
+    )
+    return response
 
-# تصميم واجهة Gradio
+# بناء واجهة Gradio باستخدام التصميم الهادئ والمناسب للمشروع
 with gr.Blocks(theme=gr.themes.Soft()) as demo:
-    gr.Markdown("# 🧠 MindEase - منصة الدعم الأكاديمي والنفسي للطلاب")
-    gr.Markdown("مرحباً بكِ، نحن هنا لمساعدتك في رحلتك الجامعية.")
+    gr.Markdown("# 🧠 MindEase")
+    gr.Markdown("مساحتك الآمنة للاسترخاء، تفريغ الأفكار، والدعم النفسي الذكي.")
     
     with gr.Row():
         with gr.Column():
-            txt_input = gr.Textbox(label="اكتبي مشكلتك أو استفسارك هنا:", placeholder="مثلاً: أعاني من ضغط في المذاكرة...")
-            submit_btn = gr.Button("إرسال", variant="primary")
+            user_msg = gr.Textbox(label="ما الذي يراودك أو يشغل تفكيرك الآن؟", placeholder="اكتبي هنا...")
+            submit_btn = gr.Button("إرسال ودعم", variant="primary")
+        
         with gr.Column():
-            output = gr.Textbox(label="رد المساعد:")
+            output_box = gr.Textbox(label="الاستجابة والمساحة الهادئة", lines=5)
+            
+    submit_btn.click(fn=mind_ease_response, inputs=user_msg, outputs=output_box)
 
-    submit_btn.click(fn=mind_ease_response, inputs=txt_input, outputs=output)
-
-# تشغيل التطبيق بالاعتماد على منفذ Azure
 if name == "__main__":
-    port = int(os.environ.get("PORT", 8000))
-    demo.launch(server_name="0.0.0.0", server_port=port, share=False)
+    demo.launch(server_name="0.0.0.0", server_port=8000)
