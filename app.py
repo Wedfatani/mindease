@@ -10,10 +10,8 @@ def mind_ease_response(user_input):
     )
     return response
 
-# استخدام الطريقة المتوافقة تماماً مع الإصدارات الحديثة
-theme = gr.themes.Soft()
-
-with gr.Blocks(theme=theme) as demo:
+# بناء الواجهة باستخدام Gradio
+with gr.Blocks() as demo:
     gr.Markdown("# 🧠 MindEase")
     gr.Markdown("مساحتك الآمنة للاسترخاء، تفريغ الأفكار، والدعم النفسي الذكي.")
     
@@ -27,5 +25,5 @@ with gr.Blocks(theme=theme) as demo:
             
     submit_btn.click(fn=mind_ease_response, inputs=user_msg, outputs=output_box)
 
-if name == "__main__":
-    demo.launch(server_name="0.0.0.0", server_port=8000)
+# هذا السطر ضروري جداً لكي يتعرف عليه Gunicorn في أزور
+app = gr.mount_gradio_app(None, demo, path="/")
