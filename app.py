@@ -1,29 +1,14 @@
 import gradio as gr
 
-def mind_ease_response(user_input):
-    if not user_input.strip():
-        return "الرجاء كتابة ما تفكر فيه لنتمكن من مساعدتك."
-    
-    response = (
-        f"أهلاً بكِ. لقد تلقيت رسالتكِ: '{user_input}'\n\n"
-        "خذي نفساً عميقاً وافرغي ذهنك قليلاً. نحن هنا دائماً لدعمك ومساعدتك في تخطي الضغوط والوصول للراحة النفسية والذهنية المطلوبة. 🌿✨"
-    )
-    return response
+def greet(name):
+    return f"مرحباً بكِ يا {name}! مساحتك الهادئة جاهزة. 🌿"
 
-# بناء الواجهة باستخدام Gradio
-with gr.Blocks() as demo:
-    gr.Markdown("# 🧠 MindEase")
-    gr.Markdown("مساحتك الآمنة للاسترخاء، تفريغ الأفكار، والدعم النفسي الذكي.")
-    
-    with gr.Row():
-        with gr.Column():
-            user_msg = gr.Textbox(label="ما الذي يراودك أو يشغل تفكيرك الآن؟", placeholder="اكتبي هنا...")
-            submit_btn = gr.Button("إرسال ودعم", variant="primary")
-        
-        with gr.Column():
-            output_box = gr.Textbox(label="الاستجابة والمساحة الهادئة", lines=5)
-            
-    submit_btn.click(fn=mind_ease_response, inputs=user_msg, outputs=output_box)
+demo = gr.Interface(
+    fn=greet, 
+    inputs=gr.Textbox(label="اكتبي شيئاً هنا..."), 
+    outputs=gr.Textbox(label="الرد"),
+    title="MindEase"
+)
 
-# هذا السطر ضروري جداً لكي يتعرف عليه Gunicorn في أزور
-app = gr.mount_gradio_app(None, demo, path="/")
+if name == "__main__":
+    demo.launch(server_name="0.0.0.0", server_port=8000)
