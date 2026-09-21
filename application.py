@@ -113,5 +113,5 @@ def home():
     )
 
 
-if __name__ == "__main__":
+if name == "__main__":
     app.run()
