@@ -213,7 +213,8 @@ def health():
 
 
 # =========================
-# Chat# =========================
+# Chat
+# =========================
 
 @app.post("/api/chat")
 def chat(req: ChatRequest):
