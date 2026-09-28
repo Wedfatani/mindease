@@ -1,4 +1,718 @@
-<div class="stat">
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>MindEase | رفيقك الذكي للدراسة</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+
+<body>
+
+    <div class="background-glow glow-one"></div>
+    <div class="background-glow glow-two"></div>
+
+    <!-- NAVBAR -->
+
+    <header class="navbar">
+
+        <div class="logo-area">
+
+            <div class="logo-icon">
+                M
+            </div>
+
+            <div>
+                <div class="logo-name">
+                    MindEase
+                </div>
+
+                <div class="logo-subtitle">
+                    Study smarter. Feel lighter.
+                </div>
+            </div>
+
+        </div>
+
+        <div class="nav-actions">
+
+            <button
+                class="nav-button"
+                onclick="toggleTheme()"
+                title="تغيير المظهر"
+            >
+                ☾
+            </button>
+
+            <div class="profile">
+                ود
+            </div>
+
+        </div>
+
+    </header>
+
+
+    <main class="container">
+
+        <!-- HOME -->
+
+        <section id="homeView">
+
+            <div class="hero">
+
+                <div class="hero-content">
+
+                    <div class="badge">
+                        ✦ مساعد دراسة يفهمك
+                    </div>
+
+                    <h1>
+                        وش نذاكر اليوم؟
+                        <br>
+
+                        <span>
+                            خلّ MindEase يرتّبها معك.
+                        </span>
+                    </h1>
+
+                    <p>
+                        افهم الدرس، اختبر نفسك، وابنِ خطة دراسة
+                        تناسب وقتك — كل شيء في مكان واحد.
+                    </p>
+
+                    <button
+                        class="primary-button"
+                        onclick="openMode('chat')"
+                    >
+                        ابدأ جلسة دراسة
+                        <span>←</span>
+                    </button>
+
+                </div>
+
+
+                <div class="hero-visual">
+
+                    <div class="orb">
+
+                        <div class="orb-inner">
+                            ✦
+                        </div>
+
+                    </div>
+
+                    <div class="floating-card card-one">
+                        🧠 أفهم أسرع
+                    </div>
+
+                    <div class="floating-card card-two">
+                        📝 أختبر نفسي
+                    </div>
+
+                    <div class="floating-card card-three">
+                        📅 خطتي
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- FEATURES -->
+
+            <div class="section-title">
+
+                <div>
+
+                    <div class="small-title">
+                        STUDY ROOM
+                    </div>
+
+                    <h2>
+                        وش تحتاج الآن؟
+                    </h2>
+
+                </div>
+
+                <span>
+                    اختر وضعك وابدأ
+                </span>
+
+            </div>
+
+
+            <div class="features">
+
+                <button
+                    class="feature purple"
+                    onclick="openMode('explain')"
+                >
+
+                    <div class="feature-icon">
+                        🧠
+                    </div>
+
+                    <div class="feature-text">
+
+                        <strong>
+                            أفهم درس
+                        </strong>
+
+                        <small>
+                            شرح مبسط على مستواك
+                        </small>
+
+                    </div>
+
+                    <div class="arrow">
+                        ↗
+                    </div>
+
+                </button>
+
+
+                <button
+                    class="feature blue"
+                    onclick="openMode('quiz')"
+                >
+
+                    <div class="feature-icon">
+                        📝
+                    </div>
+
+                    <div class="feature-text">
+
+                        <strong>
+                            أختبر نفسي
+                        </strong>
+
+                        <small>
+                            أسئلة تكشف نقاط ضعفك
+                        </small>
+
+                    </div>
+
+                    <div class="arrow">
+                        ↗
+                    </div>
+
+                </button>
+
+
+                <button
+                    class="feature teal"
+                    onclick="openMode('plan')"
+                >
+
+                    <div class="feature-icon">
+                        📅
+                    </div>
+
+                    <div class="feature-text">
+
+                        <strong>
+                            خطتي
+                        </strong>
+
+                        <small>
+                            خطة مذاكرة حسب وقتك
+                        </small>
+
+                    </div>
+
+                    <div class="arrow">
+                        ↗
+                    </div>
+
+                </button>
+
+
+                <button
+                    class="feature orange"
+                    onclick="openMode('progress')"
+                >
+
+                    <div class="feature-icon">
+                        📊
+                    </div>
+
+                    <div class="feature-text">
+
+                        <strong>
+                            تقدمي
+                        </strong>
+
+                        <small>
+                            تابع إنجاز جلساتك
+                        </small>
+
+                    </div>
+
+                    <div class="arrow">
+                        ↗
+                    </div>
+
+                </button>
+
+            </div>
+
+
+            <!-- DASHBOARD -->
+
+            <div class="dashboard">
+
+                <div class="progress-card">
+
+                    <div class="dashboard-title">
+
+                        <span>
+                            🔥
+                        </span>
+
+                        <div>
+
+                            <strong>
+                                إنجازك اليوم
+                            </strong>
+
+                            <small>
+                                كل جلسة تقرّبك من هدفك
+                            </small>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="progress-bar">
+
+                        <div id="dailyBar"></div>
+
+                    </div>
+
+
+                    <div class="progress-info">
+
+                        <span id="dailyText">
+                            0 / 3 جلسات
+                        </span>
+
+                        <button onclick="openMode('chat')">
+                            ابدأ جلسة
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <div class="tip-card">
+
+                    <div class="tip-icon">
+                        💡
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            نصيحة MindEase
+                        </strong>
+
+                        <p>
+                            لا تحاول تحفظ كل شيء دفعة واحدة.
+                            افهم الفكرة، اختبر نفسك، ثم راجع الخطأ.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- STUDY MODES -->
+
+        <section
+            id="modeView"
+            class="hidden"
+        >
+
+            <button
+                class="back-button"
+                onclick="showHome()"
+            >
+                → الرئيسية
+            </button>
+
+
+            <div class="mode-header">
+
+                <div class="small-title">
+                    STUDY ROOM
+                </div>
+
+                <h2 id="modeTitle">
+                    جلسة دراسة
+                </h2>
+
+                <p id="modeSubtitle">
+                    خلنا نبدأ.
+                </p>
+
+            </div>
+
+
+            <!-- CHAT -->
+
+            <div
+                id="chatMode"
+                class="mode"
+            >
+
+                <div
+                    id="chatMessages"
+                    class="chat-box"
+                >
+
+                    <div class="ai-message">
+
+                        <div class="ai-icon">
+                            ✦
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                MindEase
+                            </strong>
+
+                            <p>
+                                هلا! وش المادة أو الدرس
+                                اللي تبين نذاكره؟
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="quick-buttons">
+
+                    <button
+                        onclick="usePrompt('اشرح لي الفكرة الأساسية بطريقة بسيطة')"
+                    >
+                        اشرح لي ببساطة
+                    </button>
+
+                    <button
+                        onclick="usePrompt('اختبرني في هذا الموضوع')"
+                    >
+                        اختبرني
+                    </button>
+
+                    <button
+                        onclick="usePrompt('اعطني مثال محلول ثم سؤال أتدرب عليه')"
+                    >
+                        مثال + تدريب
+                    </button>
+
+                </div>
+
+
+                <form
+                    class="chat-input"
+                    onsubmit="sendChat(event)"
+                >
+
+                    <input
+                        id="chatInput"
+                        type="text"
+                        placeholder="اكتبي سؤالك أو اسم الدرس..."
+                        autocomplete="off"
+                    >
+
+                    <button type="submit">
+                        إرسال ↑
+                    </button>
+
+                </form>
+
+            </div>
+
+
+            <!-- EXPLAIN -->
+
+            <div
+                id="explainMode"
+                class="mode hidden"
+            >
+
+                <div class="form-card">
+
+                    <label>
+                        وش تبين تفهمين؟
+                    </label>
+
+                    <textarea
+                        id="explainTopic"
+                        placeholder="مثلاً: الانقسام المتساوي في الأحياء"
+                    ></textarea>
+
+
+                    <label>
+                        مستواك
+                    </label>
+
+                    <select id="explainLevel">
+
+                        <option>
+                            مبتدئ
+                        </option>
+
+                        <option selected>
+                            متوسط
+                        </option>
+
+                        <option>
+                            متقدم
+                        </option>
+
+                    </select>
+
+
+                    <button
+                        class="primary-button full"
+                        onclick="runExplain()"
+                    >
+                        اشرح لي ✦
+                    </button>
+
+                </div>
+
+
+                <div
+                    id="explainResult"
+                    class="result hidden"
+                ></div>
+
+            </div>
+
+
+            <!-- QUIZ -->
+
+            <div
+                id="quizMode"
+                class="mode hidden"
+            >
+
+                <div class="form-card">
+
+                    <label>
+                        الموضوع
+                    </label>
+
+                    <input
+                        id="quizTopic"
+                        placeholder="مثلاً: قوانين نيوتن"
+                    >
+
+
+                    <div class="two-columns">
+
+                        <div>
+
+                            <label>
+                                عدد الأسئلة
+                            </label>
+
+                            <select id="quizCount">
+
+                                <option>
+                                    3
+                                </option>
+
+                                <option selected>
+                                    5
+                                </option>
+
+                                <option>
+                                    7
+                                </option>
+
+                                <option>
+                                    10
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <div>
+
+                            <label>
+                                المستوى
+                            </label>
+
+                            <select id="quizLevel">
+
+                                <option>
+                                    مبتدئ
+                                </option>
+
+                                <option selected>
+                                    متوسط
+                                </option>
+
+                                <option>
+                                    متقدم
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+
+                    <button
+                        class="primary-button full"
+                        onclick="runQuiz()"
+                    >
+                        ابدأ الاختبار 📝
+                    </button>
+
+                </div>
+
+
+                <div
+                    id="quizResult"
+                    class="result hidden"
+                ></div>
+
+            </div>
+
+
+            <!-- PLAN -->
+
+            <div
+                id="planMode"
+                class="mode hidden"
+            >
+
+                <div class="form-card">
+
+                    <label>
+                        المادة
+                    </label>
+
+                    <input
+                        id="planSubject"
+                        placeholder="مثلاً: رياضيات"
+                    >
+
+
+                    <div class="two-columns">
+
+                        <div>
+
+                            <label>
+                                تاريخ الاختبار
+                            </label>
+
+                            <input
+                                id="planDate"
+                                type="date"
+                            >
+
+                        </div>
+
+
+                        <div>
+
+                            <label>
+                                ساعاتك يومياً
+                            </label>
+
+                            <input
+                                id="planHours"
+                                type="number"
+                                value="2"
+                                min="0.5"
+                                max="12"
+                                step="0.5"
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <label>
+                        مستواك
+                    </label>
+
+                    <select id="planLevel">
+
+                        <option>
+                            مبتدئ
+                        </option>
+
+                        <option selected>
+                            متوسط
+                        </option>
+
+                        <option>
+                            متقدم
+                        </option>
+
+                    </select>
+
+
+                    <button
+                        class="primary-button full"
+                        onclick="runPlan()"
+                    >
+                        ابنِ خطتي 📅
+                    </button>
+
+                </div>
+
+
+                <div
+                    id="planResult"
+                    class="result hidden"
+                ></div>
+
+            </div>
+
+
+            <!-- PROGRESS -->
+
+            <div
+                id="progressMode"
+                class="mode hidden"
+            >
+
+                <div class="stats">
+
+                    <div class="stat">
 
                         <span>
                             🔥
