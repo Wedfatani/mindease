@@ -1,0 +1,334 @@
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+
+    font-family: "Cairo", sans-serif;
+
+    background:
+        radial-gradient(
+            circle at 85% 10%,
+            rgba(111, 78, 255, 0.12),
+            transparent 30%
+        ),
+        radial-gradient(
+            circle at 10% 90%,
+            rgba(30, 200, 180, 0.08),
+            transparent 30%
+        ),
+        #07070b;
+
+    color: #f7f5fb;
+
+    overflow-x: hidden;
+}
+
+
+/* =========================
+   BACKGROUND
+========================= */
+
+.background-glow {
+    position: fixed;
+
+    width: 350px;
+    height: 350px;
+
+    border-radius: 50%;
+
+    filter: blur(120px);
+
+    opacity: 0.16;
+
+    pointer-events: none;
+
+    z-index: -1;
+}
+
+.glow-one {
+    background: #7c3aed;
+
+    top: -150px;
+    right: -100px;
+}
+
+.glow-two {
+    background: #14b8a6;
+
+    bottom: -150px;
+    left: -100px;
+}
+
+
+/* =========================
+   NAVBAR
+========================= */
+
+.navbar {
+    width: 100%;
+    max-width: 1200px;
+
+    margin: auto;
+
+    padding: 22px 25px;
+
+    display: flex;
+
+    justify-content: space-between;
+    align-items: center;
+}
+
+
+.logo-area {
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+}
+
+
+.logo-icon {
+    width: 44px;
+    height: 44px;
+
+    border-radius: 14px;
+
+    display: grid;
+    place-items: center;
+
+    font-size: 19px;
+    font-weight: 800;
+
+    background:
+        linear-gradient(
+            135deg,
+            #a68cff,
+            #5d43c5
+        );
+
+    box-shadow:
+        0 0 35px
+        rgba(124, 92, 255, 0.3);
+}
+
+
+.logo-name {
+    font-size: 19px;
+
+    font-weight: 800;
+}
+
+
+.logo-subtitle {
+    color: #85808f;
+
+    font-size: 9px;
+}
+
+
+.nav-actions {
+    display: flex;
+
+    gap: 10px;
+
+    align-items: center;
+}
+
+
+.nav-button,
+.profile {
+    width: 43px;
+    height: 43px;
+
+    border-radius: 14px;
+
+    border: 1px solid
+        rgba(255,255,255,0.08);
+
+    background:
+        rgba(255,255,255,0.04);
+
+    color: white;
+
+    cursor: pointer;
+}
+
+
+.profile {
+    display: grid;
+    place-items: center;
+
+    background: #c6b8ff;
+
+    color: #20192e;
+
+    font-weight: 800;
+}
+
+
+/* =========================
+   CONTAINER
+========================= */
+
+.container {
+    width: 100%;
+    max-width: 1200px;
+
+    margin: auto;
+
+    padding:
+        20px 25px
+        70px;
+}
+
+
+/* =========================
+   HERO
+========================= */
+
+.hero {
+    min-height: 490px;
+
+    display: grid;
+
+    grid-template-columns:
+        1fr
+        0.9fr;
+
+    align-items: center;
+
+    gap: 50px;
+}
+
+
+.badge {
+    display: inline-block;
+
+    color: #aa9aff;
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+    padding: 8px 12px;
+
+    border-radius: 50px;
+
+    background:
+        rgba(139,115,255,0.08);
+
+    border:
+        1px solid
+        rgba(139,115,255,0.15);
+}
+
+
+.hero h1 {
+    font-size:
+        clamp(
+            38px,
+            5vw,
+            66px
+        );
+
+    line-height: 1.2;
+
+    margin:
+        18px 0;
+}
+
+
+.hero h1 span {
+    background:
+        linear-gradient(
+            90deg,
+            #ffffff,
+            #9e8aff
+        );
+
+    -webkit-background-clip: text;
+
+    color: transparent;
+}
+
+
+.hero p {
+    max-width: 600px;
+
+    color: #aaa4b3;
+
+    line-height: 2;
+
+    font-size: 15px;
+
+    margin-bottom: 28px;
+}
+
+
+/* =========================
+   BUTTON
+========================= */
+
+.primary-button {
+    border: none;
+
+    padding:
+        14px 22px;
+
+    border-radius: 15px;
+
+    font-family: inherit;
+
+    font-weight: 800;
+
+    color: white;
+
+    cursor: pointer;
+
+    background:
+        linear-gradient(
+            135deg,
+            #927bff,
+            #6246d9
+        );
+
+    box-shadow:
+        0 15px 40px
+        rgba(99, 70, 217, 0.2);
+
+    transition: 0.2s;
+}
+
+
+.primary-button:hover {
+    transform:
+        translateY(-2px);
+
+    filter:
+        brightness(1.08);
+}
+
+
+.primary-button span {
+    margin-right: 8px;
+}
+
+
+.full {
+    width: 100%;
+}
+
+
+/* =========================
+   HERO ORB
+========================= */
+
+.hero-visual {
