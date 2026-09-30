@@ -1,3 +1,4 @@
+# MindEase dependencies
 fastapi
 uvicorn
 gunicorn
