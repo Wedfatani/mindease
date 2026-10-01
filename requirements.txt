@@ -1,6 +1,6 @@
-# MindEase dependencies
 fastapi
 uvicorn
 gunicorn
 openai
 python-dotenv
+python-multipart
