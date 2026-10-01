@@ -1,705 +1,1205 @@
-const state = {
+const pages = [
+    "home",
+    "chat",
+    "explain",
+    "quiz",
+    "plan",
+    "progress"
+];
 
-    sessions:
-        Number(
-            localStorage.getItem("me_sessions") || 0
-        ),
+let currentPage = "home";
+let selectedFile = null;
 
-    minutes:
-        Number(
-            localStorage.getItem("me_minutes") || 0
-        ),
+let currentLanguage =
+    localStorage.getItem("mindEaseLanguage") || "ar";
 
-    questions:
-        Number(
-            localStorage.getItem("me_questions") || 0
-        ),
+let history = [];
 
-    history: []
+
+// ==========================================
+// TRANSLATIONS
+// ==========================================
+
+const translations = {
+
+    ar: {
+
+        brandSubtitle: "مساحة مذاكرة أهدأ",
+
+        navHome: "الرئيسية",
+        navChat: "مساحة المذاكرة",
+        navProgress: "تقدمي",
+
+        badge: "مذاكرة بدون ضغط",
+
+        heroTitle:
+            "مو لازم تواجهين المذاكرة لحالك.",
+
+        heroText:
+            "MindEase مساحة هادئة تساعدك تفهمين، تراجعين، وتخططين لمذاكرتك خطوة بخطوة.",
+
+        startBtn: "ابدئي معي",
+
+        toolsEyebrow: "أدواتك",
+        toolsTitle: "اختاري اللي تحتاجينه الآن",
+
+        explainTitle: "أفهم درس",
+        explainText:
+            "اشرحي لي أي موضوع بطريقة بسيطة.",
+
+        quizTitle: "أختبر نفسي",
+        quizText:
+            "اختبري فهمك بأسئلة قصيرة.",
+
+        planTitle: "خطتي",
+        planText:
+            "رتبي مذاكرتك بدون ما تضغطين نفسك.",
+
+        progressTitle: "تقدمي",
+        progressText:
+            "تابعي خطواتك وإنجازاتك.",
+
+        chatTitle: "مساحة المذاكرة",
+
+        chatSubtitle:
+            "قولي اللي بخاطرك، ونبدأ من أبسط نقطة.",
+
+        online: "معك الآن",
+
+        welcomeMessage:
+            "هلا 🤍 أنا MindEase. إذا تحسين إن كل شيء ملخبط، عادي. قولي لي وش أكثر شيء مضايقك ونفككه سوا خطوة خطوة.",
+
+        explainPageText:
+            "اكتبي الموضوع وأنا أشرحه لك ببساطة.",
+
+        quizPageText:
+            "خلينا نشوف وش فهمتي بطريقة خفيفة.",
+
+        planPageText:
+            "نبني خطة تناسب وقتك بدل ما نضغط عليك.",
+
+        progressPageText:
+            "كل خطوة صغيرة تعتبر تقدم.",
+
+        topicLabel: "وش الموضوع؟",
+        levelLabel: "مستواك",
+        countLabel: "عدد الأسئلة",
+        subjectLabel: "المادة",
+        dateLabel: "تاريخ الاختبار",
+        hoursLabel:
+            "كم ساعة تقدرين تذاكرين يوميًا؟",
+
+        explainBtn: "اشرح لي 🤍",
+        quizBtn: "ابدأ الاختبار",
+        planBtn: "ابني لي الخطة",
+
+        progressMessage:
+            "لسه البداية، وهذا شيء جميل 🤍",
+
+        resetProgress:
+            "تصفير التقدم"
+    },
+
+
+    en: {
+
+        brandSubtitle:
+            "A calmer study space",
+
+        navHome: "Home",
+        navChat: "Study Space",
+        navProgress: "Progress",
+
+        badge: "Study without the pressure",
+
+        heroTitle:
+            "You don't have to study alone.",
+
+        heroText:
+            "MindEase is a calm study space that helps you understand, review, and plan one step at a time.",
+
+        startBtn: "Start with me",
+
+        toolsEyebrow: "Your tools",
+        toolsTitle: "Choose what you need right now",
+
+        explainTitle: "Understand a lesson",
+        explainText:
+            "Explain any topic to me simply.",
+
+        quizTitle: "Test myself",
+        quizText:
+            "Check your understanding with short questions.",
+
+        planTitle: "My plan",
+        planText:
+            "Plan your study time without overwhelming yourself.",
+
+        progressTitle: "My progress",
+        progressText:
+            "Keep track of your small wins.",
+
+        chatTitle: "Study Space",
+
+        chatSubtitle:
+            "Tell me what's on your mind, and we'll start small.",
+
+        online: "Here with you",
+
+        welcomeMessage:
+            "Hey 🤍 I'm MindEase. If everything feels a little messy right now, that's okay. Tell me what's bothering you most, and we'll take it one step at a time.",
+
+        explainPageText:
+            "Tell me the topic and I'll explain it simply.",
+
+        quizPageText:
+            "Let's gently check what you understand.",
+
+        planPageText:
+            "We'll build a realistic plan around your time.",
+
+        progressPageText:
+            "Every small step counts.",
+
+        topicLabel: "What's the topic?",
+        levelLabel: "Your level",
+        countLabel: "Number of questions",
+        subjectLabel: "Subject",
+        dateLabel: "Exam date",
+        hoursLabel:
+            "How many hours can you study each day?",
+
+        explainBtn: "Explain it 🤍",
+        quizBtn: "Start quiz",
+        planBtn: "Build my plan",
+
+        progressMessage:
+            "This is just the beginning, and that's okay 🤍",
+
+        resetProgress:
+            "Reset progress"
+    }
 
 };
 
 
-const modes = {
+// ==========================================
+// LANGUAGE
+// ==========================================
 
-    chat: [
-        "Study Room",
-        "جلسة دراسة",
-        "تكلمي مع MindEase عن أي درس أو سؤال عندك."
-    ],
+function applyLanguage() {
 
-    explain: [
-        "Understand",
-        "أفهم درس",
-        "اكتبي اسم الموضوع وخلي MindEase يشرحه لك."
-    ],
+    const lang = translations[currentLanguage];
 
-    quiz: [
-        "Quiz Me",
-        "أختبر نفسي",
-        "اختبري فهمك واكتشفي الأشياء التي تحتاج مراجعة."
-    ],
+    document.documentElement.lang =
+        currentLanguage;
 
-    plan: [
-        "Smart Plan",
-        "خطتي",
-        "ابني خطة مذاكرة عملية حسب تاريخ اختبارك ووقتك."
-    ],
+    document.documentElement.dir =
+        currentLanguage === "ar"
+            ? "rtl"
+            : "ltr";
 
-    progress: [
-        "Progress",
-        "تقدمي",
-        "شوفي جلساتك وإحصاءات مذاكرتك."
-    ]
+    document
+        .querySelectorAll("[data-i18n]")
+        .forEach(element => {
 
-};
+            const key =
+                element.dataset.i18n;
+
+            if (lang[key]) {
+                element.textContent =
+                    lang[key];
+            }
+        });
 
 
-function $(id) {
-    return document.getElementById(id);
+    document
+        .querySelectorAll("[data-placeholder-ar]")
+        .forEach(element => {
+
+            element.placeholder =
+                currentLanguage === "ar"
+                    ? element.dataset.placeholderAr
+                    : element.dataset.placeholderEn;
+        });
+
+
+    const langBtn =
+        document.getElementById("langBtn");
+
+    langBtn.textContent =
+        currentLanguage === "ar"
+            ? "EN"
+            : "ع";
+
+
+    document.getElementById("chatInput").placeholder =
+        currentLanguage === "ar"
+            ? "قولي لي وش تحتاجين..."
+            : "Tell me what you need...";
 }
 
 
-/* =========================
-   NAVIGATION
-========================= */
+document
+    .getElementById("langBtn")
+    .addEventListener("click", () => {
 
-function openMode(mode) {
+        currentLanguage =
+            currentLanguage === "ar"
+                ? "en"
+                : "ar";
 
-    $("homeView").classList.add("hidden");
+        localStorage.setItem(
+            "mindEaseLanguage",
+            currentLanguage
+        );
 
-    $("modeView").classList.remove("hidden");
-
-    $("modeTitle").textContent =
-        modes[mode][1];
-
-    $("modeSubtitle").textContent =
-        modes[mode][2];
-
-
-    const allModes = [
-        "chat",
-        "explain",
-        "quiz",
-        "plan",
-        "progress"
-    ];
-
-
-    allModes.forEach(function (item) {
-
-        const element =
-            $(item + "Mode");
-
-        if (item === mode) {
-
-            element.classList.remove(
-                "hidden"
-            );
-
-        } else {
-
-            element.classList.add(
-                "hidden"
-            );
-
-        }
-
+        applyLanguage();
     });
 
 
-    if (mode === "progress") {
-        updateStats();
+// ==========================================
+// NAVIGATION
+// ==========================================
+
+function showPage(page) {
+
+    if (!pages.includes(page)) {
+        page = "home";
+    }
+
+    currentPage = page;
+
+    document
+        .querySelectorAll(".page")
+        .forEach(section => {
+            section.classList.remove("active");
+        });
+
+    const target =
+        document.getElementById(
+            `${page}Page`
+        );
+
+    if (target) {
+        target.classList.add("active");
     }
 
 
-    window.scrollTo({
-        top: 0,
-        behavior: "smooth"
-    });
+    document
+        .querySelectorAll(".nav-link")
+        .forEach(button => {
 
-}
+            button.classList.toggle(
+                "active",
+                button.dataset.page === page
+            );
+        });
 
-
-function showHome() {
-
-    $("modeView").classList.add("hidden");
-
-    $("homeView").classList.remove("hidden");
-
-    updateProgress();
 
     window.scrollTo({
         top: 0,
         behavior: "smooth"
     });
-
 }
 
 
-/* =========================
-   CHAT
-========================= */
+document.addEventListener(
+    "click",
+    event => {
 
-function usePrompt(text) {
+        const button =
+            event.target.closest("[data-page]");
 
-    $("chatInput").value = text;
+        if (!button) return;
 
-    $("chatInput").focus();
+        const page =
+            button.dataset.page;
 
-}
+        showPage(page);
+    }
+);
 
 
-function escapeHtml(text) {
+document
+    .getElementById("homeBtn")
+    .addEventListener(
+        "click",
+        () => showPage("home")
+    );
 
-    return text.replace(
-        /[&<>"']/g,
-        function (character) {
 
-            return {
+document
+    .getElementById("backBtn")
+    .addEventListener(
+        "click",
+        () => {
 
-                "&": "&amp;",
-                "<": "&lt;",
-                ">": "&gt;",
-                '"': "&quot;",
-                "'": "&#039;"
-
-            }[character];
-
+            if (currentPage !== "home") {
+                showPage("home");
+            }
         }
     );
 
+
+document
+    .getElementById("chatBack")
+    ?.addEventListener(
+        "click",
+        () => showPage("home")
+    );
+
+
+// ==========================================
+// THEME
+// ==========================================
+
+const savedTheme =
+    localStorage.getItem("mindEaseTheme");
+
+if (savedTheme === "light") {
+    document.body.classList.add("light");
 }
 
 
-function addMessage(role, text) {
+document
+    .getElementById("themeBtn")
+    .addEventListener(
+        "click",
+        () => {
 
-    const box =
-        $("chatMessages");
+            document.body.classList.toggle(
+                "light"
+            );
 
-    const element =
+            localStorage.setItem(
+                "mindEaseTheme",
+                document.body.classList.contains("light")
+                    ? "light"
+                    : "dark"
+            );
+
+            document.getElementById(
+                "themeBtn"
+            ).textContent =
+                document.body.classList.contains("light")
+                    ? "☀"
+                    : "☾";
+        }
+    );
+
+
+// ==========================================
+// HELPERS
+// ==========================================
+
+function escapeHTML(text) {
+
+    return text
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+}
+
+
+function addMessage(
+    text,
+    type = "ai"
+) {
+
+    const chatWindow =
+        document.getElementById("chatWindow");
+
+    const wrapper =
         document.createElement("div");
 
+    wrapper.className =
+        `message ${type === "user"
+            ? "user-message"
+            : "ai-message"}`;
 
-    if (role === "user") {
 
-        element.className =
-            "user-message";
+    if (type === "ai") {
 
-        element.innerHTML = `
-            <div>
-                <p>
-                    ${escapeHtml(text)}
-                </p>
-            </div>
-        `;
+        const avatar =
+            document.createElement("div");
+
+        avatar.className =
+            "avatar-ai";
+
+        avatar.textContent = "🧠";
+
+        wrapper.appendChild(avatar);
+    }
+
+
+    const bubble =
+        document.createElement("div");
+
+    bubble.className = "bubble";
+
+    bubble.innerHTML =
+        escapeHTML(text);
+
+
+    wrapper.appendChild(bubble);
+
+    chatWindow.appendChild(wrapper);
+
+    chatWindow.scrollTop =
+        chatWindow.scrollHeight;
+}
+
+
+function showToast(message) {
+
+    const toast =
+        document.getElementById("toast");
+
+    toast.textContent = message;
+
+    toast.classList.add("show");
+
+    setTimeout(() => {
+        toast.classList.remove("show");
+    }, 2500);
+}
+
+
+function setLoading(button, loading) {
+
+    if (!button) return;
+
+    if (loading) {
+
+        button.dataset.originalText =
+            button.textContent;
+
+        button.disabled = true;
+
+        button.textContent =
+            currentLanguage === "ar"
+                ? "لحظة..."
+                : "One moment...";
 
     } else {
 
-        element.className =
-            "ai-message";
+        button.disabled = false;
 
-        element.innerHTML = `
-            <div class="ai-icon">
-                ✦
-            </div>
-
-            <div>
-                <strong>
-                    MindEase
-                </strong>
-
-                <p>
-                    ${escapeHtml(text)}
-                </p>
-            </div>
-        `;
-
+        button.textContent =
+            button.dataset.originalText;
     }
-
-
-    box.appendChild(element);
-
-    box.scrollTop =
-        box.scrollHeight;
-
 }
 
 
-/* =========================
-   API
-========================= */
+// ==========================================
+// CHAT
+// ==========================================
 
-async function post(url, data) {
+document
+    .getElementById("chatForm")
+    .addEventListener(
+        "submit",
+        async event => {
 
-    const response =
-        await fetch(
-            url,
-            {
-                method: "POST",
+            event.preventDefault();
 
-                headers: {
-                    "Content-Type":
-                        "application/json"
-                },
+            const input =
+                document.getElementById(
+                    "chatInput"
+                );
 
-                body:
-                    JSON.stringify(data)
+            const message =
+                input.value.trim();
+
+            if (!message && !selectedFile) {
+                return;
             }
+
+
+            if (selectedFile) {
+
+                await analyzeUploadedFile(
+                    message
+                );
+
+                input.value = "";
+
+                return;
+            }
+
+
+            addMessage(
+                message,
+                "user"
+            );
+
+            input.value = "";
+
+            const loadingMessage =
+                currentLanguage === "ar"
+                    ? "ثواني 🤍 خليني أفكر فيها معك..."
+                    : "One second 🤍 Let me think this through with you...";
+
+            addMessage(
+                loadingMessage,
+                "ai"
+            );
+
+            const chatWindow =
+                document.getElementById(
+                    "chatWindow"
+                );
+
+            const lastMessage =
+                chatWindow.lastElementChild;
+
+            try {
+
+                const response =
+                    await fetch(
+                        "/api/chat",
+                        {
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body: JSON.stringify({
+                                message,
+                                history
+                            })
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (!response.ok) {
+                    throw new Error(
+                        data.detail ||
+                        "Request failed"
+                    );
+                }
+
+
+                lastMessage.remove();
+
+
+                addMessage(
+                    data.answer,
+                    "ai"
+                );
+
+
+                history.push({
+                    role: "user",
+                    content: message
+                });
+
+                history.push({
+                    role: "assistant",
+                    content: data.answer
+                });
+
+                updateProgress(5);
+
+            } catch (error) {
+
+                lastMessage.remove();
+
+                addMessage(
+                    currentLanguage === "ar"
+                        ? "صار عندي تعليق بسيط 🤍 جربي مرة ثانية."
+                        : "I hit a small snag 🤍 Try again.",
+                    "ai"
+                );
+
+                console.error(error);
+            }
+        }
+    );
+
+
+// ==========================================
+// FILE UPLOAD
+// ==========================================
+
+const fileInput =
+    document.getElementById(
+        "fileInput"
+    );
+
+const attachBtn =
+    document.getElementById(
+        "attachBtn"
+    );
+
+const attachmentPreview =
+    document.getElementById(
+        "attachmentPreview"
+    );
+
+const fileName =
+    document.getElementById(
+        "fileName"
+    );
+
+const removeFile =
+    document.getElementById(
+        "removeFile"
+    );
+
+
+attachBtn.addEventListener(
+    "click",
+    () => fileInput.click()
+);
+
+
+fileInput.addEventListener(
+    "change",
+    () => {
+
+        const file =
+            fileInput.files[0];
+
+        if (!file) return;
+
+        selectedFile = file;
+
+        fileName.textContent =
+            file.name;
+
+        attachmentPreview.classList.remove(
+            "hidden"
         );
+    }
+);
 
 
-    const result =
-        await response.json();
+removeFile.addEventListener(
+    "click",
+    () => {
 
+        selectedFile = null;
 
-    if (!response.ok) {
+        fileInput.value = "";
 
-        throw new Error(
-            result.detail ||
-            "حدث خطأ"
+        attachmentPreview.classList.add(
+            "hidden"
         );
-
     }
+);
 
 
-    return result;
-
-}
-
-
-/* =========================
-   CHAT SEND
-========================= */
-
-async function sendChat(event) {
-
-    event.preventDefault();
-
-
-    const input =
-        $("chatInput");
-
-
-    const text =
-        input.value.trim();
-
-
-    if (!text) {
-        return;
-    }
-
+async function analyzeUploadedFile(
+    message
+) {
 
     addMessage(
-        "user",
-        text
+        selectedFile.name,
+        "user"
+    );
+
+    const loadingText =
+        currentLanguage === "ar"
+            ? "خليني أشوف الملف معك 🤍"
+            : "Let me look through this with you 🤍";
+
+    addMessage(
+        loadingText,
+        "ai"
     );
 
 
-    input.value = "";
+    const formData =
+        new FormData();
+
+    formData.append(
+        "file",
+        selectedFile
+    );
+
+    formData.append(
+        "message",
+        message
+    );
 
 
     try {
 
-        const result =
-            await post(
-                "/api/chat",
+        const response =
+            await fetch(
+                "/api/analyze-file",
                 {
-                    message: text,
-                    history:
-                        state.history
+                    method: "POST",
+                    body: formData
                 }
             );
 
 
+        const data =
+            await response.json();
+
+
+        if (!response.ok) {
+            throw new Error(
+                data.detail ||
+                "File analysis failed"
+            );
+        }
+
+
+        const chatWindow =
+            document.getElementById(
+                "chatWindow"
+            );
+
+        chatWindow.lastElementChild.remove();
+
+
         addMessage(
-            "assistant",
-            result.answer
+            data.answer,
+            "ai"
         );
 
 
-        state.history.push(
-            {
-                role: "user",
-                content: text
-            },
+        updateProgress(10);
 
-            {
-                role: "assistant",
-                content:
-                    result.answer
+    } catch (error) {
+
+        const chatWindow =
+            document.getElementById(
+                "chatWindow"
+            );
+
+        chatWindow.lastElementChild.remove();
+
+
+        addMessage(
+            currentLanguage === "ar"
+                ? "ما قدرت أقرأ الملف هالمرة 🤍 تأكدي أنه صورة أو PDF أو TXT وجربي مرة ثانية."
+                : "I couldn't read that file this time 🤍 Make sure it's an image, PDF, or TXT and try again.",
+            "ai"
+        );
+
+        console.error(error);
+
+    } finally {
+
+        selectedFile = null;
+
+        fileInput.value = "";
+
+        attachmentPreview.classList.add(
+            "hidden"
+        );
+    }
+}
+
+
+// ==========================================
+// EXPLAIN
+// ==========================================
+
+document
+    .getElementById("explainForm")
+    .addEventListener(
+        "submit",
+        async event => {
+
+            event.preventDefault();
+
+            const button =
+                event.target.querySelector(
+                    "button"
+                );
+
+            const topic =
+                document.getElementById(
+                    "explainTopic"
+                ).value.trim();
+
+            const level =
+                document.getElementById(
+                    "explainLevel"
+                ).value;
+
+
+            if (!topic) return;
+
+
+            setLoading(button, true);
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        "/api/explain",
+                        {
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body: JSON.stringify({
+                                topic,
+                                level
+                            })
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (!response.ok) {
+                    throw new Error(
+                        data.detail
+                    );
+                }
+
+
+                const result =
+                    document.getElementById(
+                        "explainResult"
+                    );
+
+                result.textContent =
+                    data.answer;
+
+                result.classList.remove(
+                    "hidden"
+                );
+
+                updateProgress(10);
+
+            } catch (error) {
+
+                showToast(
+                    currentLanguage === "ar"
+                        ? "صار خطأ بسيط 🤍"
+                        : "Something went wrong 🤍"
+                );
+
+                console.error(error);
+
+            } finally {
+
+                setLoading(button, false);
             }
-        );
-
-
-        state.history =
-            state.history.slice(-12);
-
-
-        finishSession(15);
-
-    }
-
-    catch (error) {
-
-        addMessage(
-            "assistant",
-            "صار خطأ في الاتصال بالذكاء الاصطناعي. تأكدي من إعدادات Azure OpenAI في App Service."
-        );
-
-    }
-
-}
-
-
-/* =========================
-   EXPLAIN
-========================= */
-
-async function runExplain() {
-
-    const topic =
-        $("explainTopic")
-            .value
-            .trim();
-
-
-    if (!topic) {
-
-        alert(
-            "اكتبي الموضوع أولاً"
-        );
-
-        return;
-    }
-
-
-    setLoading(
-        "explainResult"
+        }
     );
 
 
-    try {
+// ==========================================
+// QUIZ
+// ==========================================
 
-        const result =
-            await post(
-                "/api/explain",
-                {
-                    topic: topic,
+document
+    .getElementById("quizForm")
+    .addEventListener(
+        "submit",
+        async event => {
 
-                    level:
-                        $("explainLevel")
-                            .value
+            event.preventDefault();
+
+            const button =
+                event.target.querySelector(
+                    "button"
+                );
+
+            const topic =
+                document.getElementById(
+                    "quizTopic"
+                ).value.trim();
+
+            const count =
+                Number(
+                    document.getElementById(
+                        "quizCount"
+                    ).value
+                );
+
+
+            if (!topic) return;
+
+
+            setLoading(button, true);
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        "/api/quiz",
+                        {
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body: JSON.stringify({
+                                topic,
+                                count,
+                                level: "متوسط"
+                            })
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (!response.ok) {
+                    throw new Error(
+                        data.detail
+                    );
                 }
-            );
 
 
-        showResult(
-            "explainResult",
-            result.answer
-        );
+                const result =
+                    document.getElementById(
+                        "quizResult"
+                    );
 
+                result.textContent =
+                    data.answer;
 
-        finishSession(15);
+                result.classList.remove(
+                    "hidden"
+                );
 
-    }
+                updateProgress(15);
 
-    catch (error) {
+            } catch (error) {
 
-        showResult(
-            "explainResult",
-            error.message
-        );
+                showToast(
+                    currentLanguage === "ar"
+                        ? "تعطلت شوي 🤍 جربي مرة ثانية."
+                        : "I hit a small snag 🤍 Try again."
+                );
 
-    }
+                console.error(error);
 
-}
+            } finally {
 
-
-/* =========================
-   QUIZ
-========================= */
-
-async function runQuiz() {
-
-    const topic =
-        $("quizTopic")
-            .value
-            .trim();
-
-
-    if (!topic) {
-
-        alert(
-            "اكتبي الموضوع أولاً"
-        );
-
-        return;
-    }
-
-
-    const count =
-        Number(
-            $("quizCount").value
-        );
-
-
-    setLoading(
-        "quizResult"
+                setLoading(button, false);
+            }
+        }
     );
 
 
-    try {
+// ==========================================
+// PLAN
+// ==========================================
 
-        const result =
-            await post(
-                "/api/quiz",
-                {
-                    topic: topic,
+document
+    .getElementById("planForm")
+    .addEventListener(
+        "submit",
+        async event => {
 
-                    count: count,
+            event.preventDefault();
 
-                    level:
-                        $("quizLevel")
-                            .value
+            const button =
+                event.target.querySelector(
+                    "button"
+                );
+
+
+            const subject =
+                document.getElementById(
+                    "planSubject"
+                ).value.trim();
+
+            const exam_date =
+                document.getElementById(
+                    "planDate"
+                ).value;
+
+            const hours_per_day =
+                Number(
+                    document.getElementById(
+                        "planHours"
+                    ).value
+                );
+
+
+            if (!subject || !exam_date) {
+                return;
+            }
+
+
+            setLoading(button, true);
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        "/api/plan",
+                        {
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body: JSON.stringify({
+                                subject,
+                                exam_date,
+                                hours_per_day,
+                                level: "متوسط"
+                            })
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (!response.ok) {
+                    throw new Error(
+                        data.detail
+                    );
                 }
-            );
 
 
-        showResult(
-            "quizResult",
-            result.answer
-        );
+                const result =
+                    document.getElementById(
+                        "planResult"
+                    );
 
+                result.textContent =
+                    data.answer;
 
-        state.questions += count;
+                result.classList.remove(
+                    "hidden"
+                );
 
-        save();
+                updateProgress(15);
 
-        finishSession(20);
+            } catch (error) {
 
-    }
+                showToast(
+                    currentLanguage === "ar"
+                        ? "صار خطأ بسيط 🤍"
+                        : "Something went wrong 🤍"
+                );
 
-    catch (error) {
+                console.error(error);
 
-        showResult(
-            "quizResult",
-            error.message
-        );
+            } finally {
 
-    }
-
-}
-
-
-/* =========================
-   STUDY PLAN
-========================= */
-
-async function runPlan() {
-
-    const subject =
-        $("planSubject")
-            .value
-            .trim();
-
-
-    const date =
-        $("planDate")
-            .value;
-
-
-    if (!subject || !date) {
-
-        alert(
-            "أدخلي المادة وتاريخ الاختبار"
-        );
-
-        return;
-    }
-
-
-    setLoading(
-        "planResult"
+                setLoading(button, false);
+            }
+        }
     );
 
 
-    try {
+// ==========================================
+// PROGRESS
+// ==========================================
 
-        const result =
-            await post(
-                "/api/plan",
-                {
-                    subject: subject,
+function getProgress() {
 
-                    exam_date: date,
-
-                    hours_per_day:
-                        Number(
-                            $("planHours")
-                                .value
-                        ),
-
-                    level:
-                        $("planLevel")
-                            .value
-                }
-            );
-
-
-        showResult(
-            "planResult",
-            result.answer
-        );
-
-
-        finishSession(10);
-
-    }
-
-    catch (error) {
-
-        showResult(
-            "planResult",
-            error.message
-        );
-
-    }
-
+    return Number(
+        localStorage.getItem(
+            "mindEaseProgress"
+        ) || 0
+    );
 }
 
 
-/* =========================
-   RESULTS
-========================= */
+function updateProgress(amount) {
 
-function setLoading(id) {
+    let progress =
+        getProgress();
 
-    const element =
-        $(id);
-
-
-    element.classList.remove(
-        "hidden"
-    );
-
-
-    element.textContent =
-        "MindEase يفكر لك... ✦";
-
-}
-
-
-function showResult(id, text) {
-
-    const element =
-        $(id);
-
-
-    element.classList.remove(
-        "hidden"
-    );
-
-
-    element.textContent =
-        text;
-
-}
-
-
-/* =========================
-   PROGRESS
-========================= */
-
-function finishSession(minutes) {
-
-    state.sessions++;
-
-    state.minutes += minutes;
-
-    save();
-
-    updateProgress();
-
-}
-
-
-function save() {
-
-    localStorage.setItem(
-        "me_sessions",
-        state.sessions
-    );
-
-    localStorage.setItem(
-        "me_minutes",
-        state.minutes
-    );
-
-    localStorage.setItem(
-        "me_questions",
-        state.questions
-    );
-
-}
-
-
-function updateProgress() {
-
-    const percentage =
+    progress =
         Math.min(
             100,
-            (state.sessions / 3) * 100
+            progress + amount
+        );
+
+    localStorage.setItem(
+        "mindEaseProgress",
+        progress
+    );
+
+    renderProgress();
+}
+
+
+function renderProgress() {
+
+    const progress =
+        getProgress();
+
+    const number =
+        document.getElementById(
+            "progressNumber"
+        );
+
+    const fill =
+        document.getElementById(
+            "progressFill"
         );
 
 
-    $("dailyBar")
-        .style
-        .width =
-        percentage + "%";
+    number.textContent =
+        `${progress}%`;
 
-
-    $("dailyText")
-        .textContent =
-        `${Math.min(state.sessions, 3)} / 3 جلسات`;
-
+    fill.style.width =
+        `${progress}%`;
 }
 
 
-function updateStats() {
+document
+    .getElementById("resetProgress")
+    .addEventListener(
+        "click",
+        () => {
 
-    $("statSessions")
-        .textContent =
-        state.sessions;
+            localStorage.setItem(
+                "mindEaseProgress",
+                "0"
+            );
 
+            renderProgress();
 
-    $("statMinutes")
-        .textContent =
-        state.minutes;
-
-
-    $("statQuestions")
-        .textContent =
-        state.questions;
-
-}
-
-
-/* =========================
-   THEME
-========================= */
-
-function toggleTheme() {
-
-    document.body.classList.toggle(
-        "light-mode"
+            showToast(
+                currentLanguage === "ar"
+                    ? "تم تصفير التقدم 🤍"
+                    : "Progress reset 🤍"
+            );
+        }
     );
 
-}
 
+// ==========================================
+// START
+// ==========================================
 
-/* =========================
-   START
-========================= */
+applyLanguage();
 
-updateProgress();
+renderProgress();
+
+showPage("home");
