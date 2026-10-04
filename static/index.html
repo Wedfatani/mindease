@@ -1,499 +1,654 @@
-import os
-import base64
-from pathlib import Path
-from typing import Any
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>MindEase</title>
+
+    <link
+        rel="stylesheet"
+        href="/static/styles.css"
+    >
+</head>
+
+<body>
+
+    <div class="app-shell">
+
+        <!-- NAVBAR -->
+        <header class="navbar">
+
+            <button
+                class="brand"
+                id="homeBtn"
+                aria-label="MindEase"
+            >
+                <span class="brand-icon">🧠</span>
+
+                <span>
+                    <strong>MindEase</strong>
+                    <small data-i18n="brandSubtitle">
+                        مساحة مذاكرة أهدأ
+                    </small>
+                </span>
+            </button>
+
+            <nav class="nav-links">
+
+                <button
+                    class="nav-link active"
+                    data-page="home"
+                    data-i18n="navHome"
+                >
+                    الرئيسية
+                </button>
+
+                <button
+                    class="nav-link"
+                    data-page="chat"
+                    data-i18n="navChat"
+                >
+                    مساحة المذاكرة
+                </button>
+
+                <button
+                    class="nav-link"
+                    data-page="progress"
+                    data-i18n="navProgress"
+                >
+                    تقدمي
+                </button>
+
+            </nav>
+
+            <div class="top-actions">
+
+                <button
+                    class="icon-btn"
+                    id="backBtn"
+                    title="رجوع"
+                >
+                    ↩
+                </button>
+
+                <button
+                    class="icon-btn"
+                    id="themeBtn"
+                    title="تغيير المظهر"
+                >
+                    ☾
+                </button>
+
+                <button
+                    class="language-btn"
+                    id="langBtn"
+                >
+                    EN
+                </button>
+
+            </div>
+
+        </header>
+
+
+        <!-- MAIN -->
+        <main>
 
-from fastapi import FastAPI, HTTPException, UploadFile, File, Form
-from fastapi.responses import FileResponse
-from fastapi.staticfiles import StaticFiles
-from pydantic import BaseModel, Field
-from openai import OpenAI
-from dotenv import load_dotenv
+            <!-- HOME -->
+            <section
+                class="page active"
+                id="homePage"
+            >
 
-load_dotenv()
+                <div class="hero">
 
-BASE_DIR = Path(__file__).resolve().parent
-STATIC_DIR = BASE_DIR / "static"
+                    <div class="hero-badge">
+                        <span>✦</span>
+                        <span data-i18n="badge">
+                            مذاكرة بدون ضغط
+                        </span>
+                    </div>
 
-app = FastAPI(title="MindEase")
+                    <h1 data-i18n="heroTitle">
+                        مو لازم تواجهين المذاكرة لحالك.
+                    </h1>
 
-app.mount(
-    "/static",
-    StaticFiles(directory=str(STATIC_DIR)),
-    name="static"
-)
-
-
-@app.get("/")
-def home():
-    return FileResponse(STATIC_DIR / "index.html")
-
-
-# --------------------------------------------------
-# Azure OpenAI
-# --------------------------------------------------
-
-def get_client():
-    api_key = os.getenv("AZURE_OPENAI_API_KEY")
-    endpoint = os.getenv("AZURE_OPENAI_ENDPOINT")
+                    <p data-i18n="heroText">
+                        MindEase مساحة هادئة تساعدك تفهمين،
+                        تراجعين، وتخططين لمذاكرتك خطوة بخطوة.
+                    </p>
 
-    if not api_key or not endpoint:
-        raise HTTPException(
-            status_code=500,
-            detail="Azure OpenAI is not configured."
-        )
+                    <button
+                        class="primary-btn hero-btn"
+                        data-page="chat"
+                    >
+                        <span data-i18n="startBtn">
+                            ابدئي معي
+                        </span>
+                        <span>→</span>
+                    </button>
 
-    base_url = endpoint.rstrip("/")
+                </div>
 
-    if not base_url.endswith("/openai/v1"):
-        base_url += "/openai/v1"
 
-    return OpenAI(
-        api_key=api_key,
-        base_url=base_url + "/"
-    )
+                <!-- FEATURES -->
 
+                <div class="section-heading">
 
-def get_deployment():
-    deployment = os.getenv("AZURE_OPENAI_DEPLOYMENT")
+                    <span
+                        class="eyebrow"
+                        data-i18n="toolsEyebrow"
+                    >
+                        أدواتك
+                    </span>
 
-    if not deployment:
-        raise HTTPException(
-            status_code=500,
-            detail="AZURE_OPENAI_DEPLOYMENT is not configured."
-        )
+                    <h2 data-i18n="toolsTitle">
+                        اختاري اللي تحتاجينه الآن
+                    </h2>
 
-    return deployment
+                </div>
 
 
-# --------------------------------------------------
-# MindEase Personality
-# --------------------------------------------------
+                <div class="feature-grid">
 
-SYSTEM_PROMPT = """
-You are MindEase, a warm and emotionally supportive AI study companion.
+                    <button
+                        class="feature-card"
+                        data-page="explain"
+                    >
+                        <div class="feature-icon">🧠</div>
 
-Your personality is the heart of MindEase.
+                        <h3 data-i18n="explainTitle">
+                            أفهم درس
+                        </h3>
 
-You are NOT cold, robotic, overly formal, or overly enthusiastic.
+                        <p data-i18n="explainText">
+                            اشرحي لي أي موضوع بطريقة بسيطة.
+                        </p>
 
-You speak like a calm, kind study companion sitting beside the student.
+                        <span class="card-arrow">→</span>
+                    </button>
 
-The student may come to you feeling:
-- stressed
-- confused
-- overwhelmed
-- tired
-- distracted
-- afraid of an exam
-- unsure where to start
 
-When the student sounds stressed or overwhelmed:
-1. Acknowledge how they feel briefly.
-2. Reassure them without exaggerating.
-3. Give one small clear next step.
-4. Do not overwhelm them with a huge answer.
+                    <button
+                        class="feature-card"
+                        data-page="quiz"
+                    >
+                        <div class="feature-icon">📝</div>
 
-Examples of your tone:
-Arabic:
-"ولا يهمك 🤍 خلينا نفككها خطوة خطوة."
-"خذي نفس، ونبدأ بأبسط جزء."
-"مو لازم تفهمين كل شيء مرة وحدة، نبدأ من هنا."
-"أنا معك، وش أكثر نقطة لخبطتك؟"
+                        <h3 data-i18n="quizTitle">
+                            أختبر نفسي
+                        </h3>
 
-English:
-"You're okay 🤍 Let's take it one step at a time."
-"No pressure. We'll start with the simplest part."
-"You don't need to understand everything at once."
-"I'm with you. Which part feels confusing?"
+                        <p data-i18n="quizText">
+                            اختبري فهمك بأسئلة قصيرة.
+                        </p>
 
-IMPORTANT STYLE RULES:
+                        <span class="card-arrow">→</span>
+                    </button>
 
-- Be concise.
-- Prefer short paragraphs.
-- Usually answer in 2–6 short sentences.
-- Use simple language.
-- Avoid huge walls of text.
-- Avoid unnecessary headings unless they help.
-- Ask only one question at a time.
-- Use emojis lightly, usually 0–2.
-- Never sound judgmental.
-- Never make the student feel stupid for not understanding.
-- Never say "this is easy" when the student is struggling.
-- Never overuse "أكيد!" or generic motivational phrases.
-- Do not repeat the student's entire question.
-- Explain concepts using a simple example when useful.
 
-LANGUAGE:
+                    <button
+                        class="feature-card"
+                        data-page="plan"
+                    >
+                        <div class="feature-icon">📅</div>
 
-If the student writes Arabic, answer in natural friendly Arabic.
-If the student writes English, answer in natural friendly English.
-If the student asks to switch language, follow that request.
+                        <h3 data-i18n="planTitle">
+                            خطتي
+                        </h3>
 
-For Arabic, use natural modern Arabic with a warm Gulf/Saudi-friendly tone,
-but remain understandable to Arabic speakers internationally.
+                        <p data-i18n="planText">
+                            رتبي مذاكرتك بدون ما تضغطين نفسك.
+                        </p>
 
-STUDY BEHAVIOR:
+                        <span class="card-arrow">→</span>
+                    </button>
 
-If the student is confused:
-Explain → give example → ask one tiny check question.
 
-If the student asks for a plan:
-Keep it realistic and include breaks.
+                    <button
+                        class="feature-card"
+                        data-page="progress"
+                    >
+                        <div class="feature-icon">📊</div>
 
-If the student asks for a quiz:
-Make it useful and not unnecessarily difficult.
+                        <h3 data-i18n="progressTitle">
+                            تقدمي
+                        </h3>
 
-If the student uploads a question/image/file:
-First understand what is shown.
-Then explain it clearly.
-If there is a direct question, solve it step by step.
-Do not pretend to see something that is not readable.
+                        <p data-i18n="progressText">
+                            تابعي خطواتك وإنجازاتك.
+                        </p>
 
-The goal is for students to feel:
-"I can talk to MindEase without feeling judged."
+                        <span class="card-arrow">→</span>
+                    </button>
 
-MindEase should feel like a safe study space, not a strict teacher.
-"""
+                </div>
 
+            </section>
 
-# --------------------------------------------------
-# Models
-# --------------------------------------------------
 
-class ChatRequest(BaseModel):
-    message: str = Field(min_length=1)
-    history: list[dict[str, Any]] = []
+            <!-- CHAT -->
+            <section
+                class="page"
+                id="chatPage"
+            >
 
+                <div class="page-header">
 
-class ExplainRequest(BaseModel):
-    topic: str = Field(min_length=1)
-    level: str = "متوسط"
+                    <button
+                        class="mobile-back"
+                        id="chatBack"
+                    >
+                        ←
+                    </button>
 
+                    <div>
+                        <span class="eyebrow">
+                            MindEase
+                        </span>
 
-class QuizRequest(BaseModel):
-    topic: str = Field(min_length=1)
-    count: int = Field(default=5, ge=1, le=20)
-    level: str = "متوسط"
+                        <h2 data-i18n="chatTitle">
+                            مساحة المذاكرة
+                        </h2>
 
+                        <p data-i18n="chatSubtitle">
+                            قولي اللي بخاطرك، ونبدأ من أبسط نقطة.
+                        </p>
+                    </div>
 
-class PlanRequest(BaseModel):
-    subject: str = Field(min_length=1)
-    exam_date: str
-    hours_per_day: float = Field(default=2, gt=0, le=12)
-    level: str = "متوسط"
+                    <div class="ai-status">
+                        <span></span>
+                        <span data-i18n="online">
+                            معك الآن
+                        </span>
+                    </div>
 
+                </div>
 
-# --------------------------------------------------
-# AI helper
-# --------------------------------------------------
 
-def ask_ai(prompt: str, max_tokens: int = 1000) -> str:
-    client = get_client()
+                <div
+                    class="chat-window"
+                    id="chatWindow"
+                >
 
-    try:
-        response = client.responses.create(
-            model=get_deployment(),
-            instructions=SYSTEM_PROMPT,
-            input=prompt,
-            max_output_tokens=max_tokens
-        )
+                    <div class="message ai-message">
 
-        answer = response.output_text
+                        <div class="avatar-ai">
+                            🧠
+                        </div>
 
-        if not answer:
-            raise HTTPException(
-                status_code=502,
-                detail="AI returned an empty response."
-            )
+                        <div class="bubble">
 
-        return answer
+                            <span
+                                data-i18n="welcomeMessage"
+                            >
+                                هلا 🤍 أنا MindEase.
+                                إذا تحسين إن كل شيء ملخبط،
+                                عادي. قولي لي وش أكثر شيء مضايقك
+                                ونفككه سوا خطوة خطوة.
+                            </span>
 
-    except HTTPException:
-        raise
+                        </div>
 
-    except Exception as error:
-        raise HTTPException(
-            status_code=502,
-            detail=f"AI request failed: {str(error)}"
-        )
+                    </div>
 
+                </div>
 
-# --------------------------------------------------
-# Chat
-# --------------------------------------------------
 
-@app.post("/api/chat")
-def chat(data: ChatRequest):
+                <div class="attachment-preview hidden" id="attachmentPreview">
+                    <span id="fileName"></span>
+                    <button id="removeFile">×</button>
+                </div>
 
-    history_text = "\n".join(
-        f"{item.get('role', 'user')}: {item.get('content', '')}"
-        for item in data.history[-10:]
-    )
 
-    prompt = f"""
-Previous conversation:
-{history_text}
+                <form
+                    class="chat-input-area"
+                    id="chatForm"
+                >
 
-Current student message:
-{data.message}
+                    <input
+                        type="file"
+                        id="fileInput"
+                        hidden
+                        accept=".png,.jpg,.jpeg,.webp,.pdf,.txt"
+                    >
 
-Respond naturally as MindEase.
+                    <button
+                        type="button"
+                        class="attach-btn"
+                        id="attachBtn"
+                        title="إرفاق ملف"
+                    >
+                        📎
+                    </button>
 
-Remember:
-- Be warm.
-- Be concise.
-- If the student sounds stressed, reassure them first.
-- Give one clear next step.
-- Match the student's language.
-"""
+                    <input
+                        id="chatInput"
+                        type="text"
+                        autocomplete="off"
+                        data-placeholder-ar="قولي لي وش تحتاجين..."
+                        data-placeholder-en="Tell me what you need..."
+                        placeholder="قولي لي وش تحتاجين..."
+                    >
 
-    return {
-        "answer": ask_ai(prompt)
-    }
+                    <button
+                        type="submit"
+                        class="send-btn"
+                    >
+                        ↑
+                    </button>
 
+                </form>
 
-# --------------------------------------------------
-# Explain
-# --------------------------------------------------
+            </section>
 
-@app.post("/api/explain")
-def explain(data: ExplainRequest):
 
-    prompt = f"""
-The student wants help understanding this topic:
+            <!-- EXPLAIN -->
+            <section
+                class="page"
+                id="explainPage"
+            >
 
-Topic:
-{data.topic}
+                <div class="tool-panel">
 
-Student level:
-{data.level}
+                    <div class="page-header simple">
 
-Explain it in a friendly, simple way.
+                        <div>
 
-Structure:
+                            <span class="eyebrow">
+                                🧠 MindEase
+                            </span>
 
-1. Simple explanation
-2. One example
-3. Key idea to remember
-4. One very short check question
+                            <h2 data-i18n="explainTitle">
+                                أفهم درس
+                            </h2>
 
-Do not make the response unnecessarily long.
-"""
+                            <p data-i18n="explainPageText">
+                                اكتبي الموضوع وأنا أشرحه لك ببساطة.
+                            </p>
 
-    return {
-        "answer": ask_ai(prompt, max_tokens=1200)
-    }
+                        </div>
 
+                    </div>
 
-# --------------------------------------------------
-# Quiz
-# --------------------------------------------------
 
-@app.post("/api/quiz")
-def quiz(data: QuizRequest):
+                    <form id="explainForm">
 
-    prompt = f"""
-Create a study quiz.
+                        <label data-i18n="topicLabel">
+                            وش الموضوع؟
+                        </label>
 
-Topic:
-{data.topic}
+                        <textarea
+                            id="explainTopic"
+                            required
+                            data-placeholder-ar="مثلاً: قوانين نيوتن"
+                            data-placeholder-en="Example: Newton's laws"
+                            placeholder="مثلاً: قوانين نيوتن"
+                        ></textarea>
 
-Student level:
-{data.level}
 
-Number of questions:
-{data.count}
+                        <label data-i18n="levelLabel">
+                            مستواك
+                        </label>
 
-Make the questions clear and useful.
+                        <select id="explainLevel">
 
-Use a mixture of:
-- multiple choice
-- short answer
+                            <option value="مبتدئ">
+                                مبتدئ
+                            </option>
 
-At the end include:
+                            <option
+                                value="متوسط"
+                                selected
+                            >
+                                متوسط
+                            </option>
 
-Answer Key
+                            <option value="متقدم">
+                                متقدم
+                            </option>
 
-Keep the formatting easy to read.
-"""
+                        </select>
 
-    return {
-        "answer": ask_ai(prompt, max_tokens=1800)
-    }
 
+                        <button
+                            class="primary-btn"
+                            type="submit"
+                            data-i18n="explainBtn"
+                        >
+                            اشرح لي 🤍
+                        </button>
 
-# --------------------------------------------------
-# Study Plan
-# --------------------------------------------------
+                    </form>
 
-@app.post("/api/plan")
-def plan(data: PlanRequest):
+                    <div
+                        class="result-box hidden"
+                        id="explainResult"
+                    ></div>
 
-    prompt = f"""
-Create a realistic study plan.
+                </div>
 
-Subject:
-{data.subject}
+            </section>
 
-Exam date:
-{data.exam_date}
 
-Hours available per day:
-{data.hours_per_day}
+            <!-- QUIZ -->
+            <section
+                class="page"
+                id="quizPage"
+            >
 
-Student level:
-{data.level}
+                <div class="tool-panel">
 
-Create a simple day-by-day plan.
+                    <span class="eyebrow">
+                        📝 MindEase
+                    </span>
 
-Include:
-- study blocks
-- review
-- practice
-- breaks
-- important topics
+                    <h2 data-i18n="quizTitle">
+                        أختبر نفسي
+                    </h2>
 
-The plan should feel realistic rather than overwhelming.
-"""
+                    <p data-i18n="quizPageText">
+                        خلينا نشوف وش فهمتي بطريقة خفيفة.
+                    </p>
 
-    return {
-        "answer": ask_ai(prompt, max_tokens=1800)
-    }
 
+                    <form id="quizForm">
 
-# --------------------------------------------------
-# Image / File analysis
-# --------------------------------------------------
+                        <label data-i18n="topicLabel">
+                            الموضوع
+                        </label>
 
-@app.post("/api/analyze-file")
-async def analyze_file(
-    file: UploadFile = File(...),
-    message: str = Form("")
-):
+                        <input
+                            id="quizTopic"
+                            required
+                            placeholder="مثلاً: الجهاز العصبي"
+                        >
 
-    allowed_types = {
-        "image/png",
-        "image/jpeg",
-        "image/webp",
-        "application/pdf",
-        "text/plain"
-    }
 
-    if file.content_type not in allowed_types:
-        raise HTTPException(
-            status_code=400,
-            detail="Supported files: PNG, JPG, WEBP, PDF, TXT."
-        )
+                        <label data-i18n="countLabel">
+                            عدد الأسئلة
+                        </label>
 
-    content = await file.read()
+                        <input
+                            id="quizCount"
+                            type="number"
+                            min="1"
+                            max="20"
+                            value="5"
+                        >
 
-    # Keep uploads reasonably small
-    if len(content) > 8 * 1024 * 1024:
-        raise HTTPException(
-            status_code=400,
-            detail="File is too large. Please upload a file smaller than 8 MB."
-        )
 
-    client = get_client()
+                        <button
+                            class="primary-btn"
+                            type="submit"
+                            data-i18n="quizBtn"
+                        >
+                            ابدأ الاختبار
+                        </button>
 
-    encoded = base64.b64encode(content).decode("utf-8")
+                    </form>
 
-    user_message = message.strip()
+                    <div
+                        class="result-box hidden"
+                        id="quizResult"
+                    ></div>
 
-    if not user_message:
-        user_message = """
-Please understand this uploaded study material and help the student.
+                </div>
 
-If it is a question:
-solve it and explain the reasoning.
+            </section>
 
-If it is a page or document:
-summarize the important ideas and explain the difficult parts.
 
-Keep the explanation friendly and concise.
-"""
+            <!-- PLAN -->
+            <section
+                class="page"
+                id="planPage"
+            >
 
-    if file.content_type.startswith("image/"):
+                <div class="tool-panel">
 
-        data_url = (
-            f"data:{file.content_type};base64,{encoded}"
-        )
+                    <span class="eyebrow">
+                        📅 MindEase
+                    </span>
 
-        input_content = [
-            {
-                "type": "input_text",
-                "text": user_message
-            },
-            {
-                "type": "input_image",
-                "image_url": data_url,
-                "detail": "auto"
-            }
-        ]
+                    <h2 data-i18n="planTitle">
+                        خطتي
+                    </h2>
 
-    else:
+                    <p data-i18n="planPageText">
+                        نبني خطة تناسب وقتك بدل ما نضغط عليك.
+                    </p>
 
-        file_data = (
-            f"data:{file.content_type};base64,{encoded}"
-        )
 
-        input_content = [
-            {
-                "type": "input_text",
-                "text": user_message
-            },
-            {
-                "type": "input_file",
-                "filename": file.filename or "study-file",
-                "file_data": file_data
-            }
-        ]
+                    <form id="planForm">
 
-    try:
+                        <label data-i18n="subjectLabel">
+                            المادة
+                        </label>
 
-        response = client.responses.create(
-            model=get_deployment(),
-            instructions=SYSTEM_PROMPT,
-            input=[
-                {
-                    "role": "user",
-                    "content": input_content
-                }
-            ],
-            max_output_tokens=1600
-        )
+                        <input
+                            id="planSubject"
+                            required
+                            placeholder="مثلاً: الرياضيات"
+                        >
 
-        answer = response.output_text
 
-        if not answer:
-            raise HTTPException(
-                status_code=502,
-                detail="AI returned an empty response."
-            )
+                        <label data-i18n="dateLabel">
+                            تاريخ الاختبار
+                        </label>
 
-        return {
-            "answer": answer,
-            "filename": file.filename
-        }
+                        <input
+                            id="planDate"
+                            type="date"
+                            required
+                        >
 
-    except HTTPException:
-        raise
 
-    except Exception as error:
-        raise HTTPException(
-            status_code=502,
-            detail=f"File analysis failed: {str(error)}"
-        )
+                        <label data-i18n="hoursLabel">
+                            كم ساعة تقدرين تذاكرين يوميًا؟
+                        </label>
 
+                        <input
+                            id="planHours"
+                            type="number"
+                            min="0.5"
+                            max="12"
+                            step="0.5"
+                            value="2"
+                        >
 
-# --------------------------------------------------
-# Health
-# --------------------------------------------------
 
-@app.get("/health")
-def health():
-    return {
-        "status": "ok",
-        "service": "MindEase"
-    }
+                        <button
+                            class="primary-btn"
+                            type="submit"
+                            data-i18n="planBtn"
+                        >
+                            ابني لي الخطة
+                        </button>
+
+                    </form>
+
+                    <div
+                        class="result-box hidden"
+                        id="planResult"
+                    ></div>
+
+                </div>
+
+            </section>
+
+
+            <!-- PROGRESS -->
+            <section
+                class="page"
+                id="progressPage"
+            >
+
+                <div class="progress-header">
+
+                    <span class="eyebrow">
+                        📊 MindEase
+                    </span>
+
+                    <h2 data-i18n="progressTitle">
+                        تقدمي
+                    </h2>
+
+                    <p data-i18n="progressPageText">
+                        كل خطوة صغيرة تعتبر تقدم.
+                    </p>
+
+                </div>
+
+
+                <div class="progress-card">
+
+                    <div class="progress-number" id="progressNumber">
+                        0%
+                    </div>
+
+                    <div class="progress-track">
+                        <div
+                            class="progress-fill"
+                            id="progressFill"
+                        ></div>
+                    </div>
+
+                    <p data-i18n="progressMessage">
+                        لسه البداية، وهذا شيء جميل 🤍
+                    </p>
+
+                </div>
+
+
+                <button
+                    class="secondary-btn"
+                    id="resetProgress"
+                    data-i18n="resetProgress"
+                >
+                    تصفير التقدم
+                </button>
+
+            </section>
+
+        </main>
+
+
+        <!-- TOAST -->
+        <div
+            class="toast"
+            id="toast"
+        ></div>
+
+    </div>
+
+
+    <script src="/static/app.js"></script>
+
+</body>
+</html>
